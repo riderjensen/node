@@ -1,0 +1,35 @@
+<%- include('./includes/head.ejs') %>
+</head>
+
+<body>
+	<%- include('./includes/nav.ejs') %>
+
+	<main>
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12">
+
+					<% if(prods.length > 0 ) { %>
+					<h1>My Products</h1>
+					<% for(let product of prods) { %>
+					<div class="card" style="width: 18rem;">
+						<img class="card-img-top" src="https://timedotcom.files.wordpress.com/2015/06/521811839-copy.jpg" alt="Card image cap">
+						<div class="card-body">
+							<h5 class="card-title">
+								<%= product.title %>
+							</h5>
+							<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+								content.</p>
+							<a href="#" class="btn btn-primary">Add to cart</a>
+						</div>
+					</div>
+					<% } %>
+					<% } else { %>
+					<h1>No products found</h1>
+					<% } %>
+				</div>
+			</div>
+		</div>
+
+	</main>
+	<%- include('./includes/end.ejs') %>
