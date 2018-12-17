@@ -5,3 +5,5 @@ assignment1/routes\.js
 
 usingnpm/node_modules/*
 \.vscode/launch\.json
+
+expressMod/data/products\.json
