@@ -12,9 +12,23 @@
 					<li class="nav-item <%= path === '/' ? 'active': '' %>">
 						<a class="nav-link" href="/">Home </a>
 					</li>
+					<li class="nav-item <%= path === '/products' ? 'active' : '' %>">
+						<a class="nav-link" href="/products">Products </a>
+					</li>
+					<li class="nav-item <%= path === '/cart' ? 'active' : '' %>">
+						<a class="nav-link" href="/cart">Cart </a>
+					</li>
+					<li class="nav-item <%= path === '/orders' ? 'active' : '' %>">
+						<a class="nav-link" href="/orders">Orders </a>
+					</li>
+
 					<li class="nav-item <%= path === '/admin/add-product' ? 'active' : '' %>">
 						<a class="nav-link" href="/admin/add-product">Add product </a>
 					</li>
+					<li class="nav-item <%= path === '/admin/products' ? 'active' : '' %>">
+						<a class="nav-link" href="/admin/products">Admin products </a>
+					</li>
+
 			</div>
 		</div>
 
