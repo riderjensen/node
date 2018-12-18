@@ -25,7 +25,7 @@
 								<%= product.description %>
 							</p>
 
-							<p class="text-center"><a href="#" class="btn btn-primary">Add to cart</a></p>
+							<%- include('../includes/addToCart.ejs', {product: product}) %>
 						</div>
 					</div>
 					<% } %>
