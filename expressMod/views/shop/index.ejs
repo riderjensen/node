@@ -24,8 +24,10 @@
 							<p class="card-text">
 								<%= product.description %>
 							</p>
-
+							<% if (isAuthenticated) { %>
 							<%- include('../includes/addToCart.ejs', {product: product}) %>
+							<% } %>
+
 						</div>
 					</div>
 					<% } %>

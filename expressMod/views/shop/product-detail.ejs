@@ -20,7 +20,9 @@
 					<p class="text-center">$
 						<%= product.price %>
 					</p>
-					<%- include('../includes/addToCart.ejs') %>
+					<% if (isAuthenticated) { %>
+					<%- include('../includes/addToCart.ejs', {product: product}) %>
+					<% } %>
 				</div>
 				<div class="col-xs-12 col-sm-3"></div>
 			</div>
