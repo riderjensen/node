@@ -9,7 +9,6 @@ exports.getLogin = (req, res) => {
 };
 
 exports.postLogin = (req, res) => {
-
 	User.findById("5c1d160bb235804634bd8b2f")
 		.then(user => {
 			req.session.isLoggedIn = true;
@@ -21,6 +20,18 @@ exports.postLogin = (req, res) => {
 
 		})
 		.catch(err => console.log(err))
+}
+
+exports.getSignup = (req, res) => {
+	res.render('auth/signup', {
+		path: '/signup',
+		title: 'Sign Up',
+		isAuthenticated: false
+	})
+};
+
+exports.postSignup = (req, res) => {
+
 }
 
 exports.postLogout = (req, res) => {
