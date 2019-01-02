@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 const MONGODB_URI = 'mongodb+srv://rider:12345678Ah@nodecourse-zfafv.mongodb.net/shop';
 
@@ -10,7 +11,9 @@ const app = express();
 const store = new mongoDBStore({
 	uri: MONGODB_URI,
 	collection: 'sessions'
-})
+});
+
+const csrfProtection = csrf();
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -29,6 +32,8 @@ app.set('views', './src/views');
 
 app.use(session({ secret: 'mygoodsecrettext', resave: false, saveUninitialized: true, store: store }));
 
+app.use(csrfProtection);
+
 app.use((req, res, next) => {
 	if (!req.session.user) {
 		return next();
@@ -39,6 +44,13 @@ app.use((req, res, next) => {
 			next();
 		})
 		.catch(err => console.log(err))
+})
+
+app.use((req, res, next) => {
+	res.locals.isAuthenticated = req.session.isLoggedIn;
+	res.locals.csrfToken = req.csrfToken();
+	next();
+
 })
 
 app.use('/admin', adminRoutes);
