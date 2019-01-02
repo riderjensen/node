@@ -1,0 +1,39 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body>
+	<%- include('../includes/nav.ejs') %>
+
+	<main>
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 col-sm-3">
+
+
+				</div>
+				<div class="col-xs-12 col-sm-6">
+					<form action="/signup" method="POST">
+						<label for="email">Email</label>
+						<input class="form-control" type="email" name="email" id="email">
+
+						<label for="password">Password</label>
+						<input class="form-control" type="password" name="password" id="password">
+
+						<label for="passwordConf">Confirm Password</label>
+						<input class="form-control" type="password" name="passwordConf" id="passwordConf">
+
+						<br />
+						<button type="submit" class="btn btn-primary">Sign Up</button>
+					</form>
+
+				</div>
+				<div class="col-xs-12 col-sm-3">
+
+
+				</div>
+
+			</div>
+		</div>
+
+	</main>
+	<%- include('../includes/end.ejs') %>
