@@ -15,7 +15,11 @@
 					<form action="/signup" method="POST">
 						<label for="email">Email</label>
 						<input class="form-control" type="email" name="email" id="email">
-
+						<% if (errorMessage) { %>
+						<p class="error">
+							<%= errorMessage %>
+						</p>
+						<% } %>
 						<label for="password">Password</label>
 						<input class="form-control" type="password" name="password" id="password">
 
