@@ -1,7 +1,7 @@
 
 assignment1/routes\.js
 
-*/node_modules/*
+node_modules/*
 
 usingnpm/node_modules/*
 \.vscode/launch\.json
