@@ -37,6 +37,7 @@
 					<% if (isAuthenticated) { %>
 					<li class="nav-item <%= path === '/login' ? 'active' : '' %>">
 						<form method="POST" action="/logout">
+							<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 							<button class="btn btn-primary">Logout</button>
 						</form>
 					</li>
