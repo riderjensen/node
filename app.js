@@ -4,6 +4,7 @@ const path = require('path');
 const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const MONGODB_URI = 'mongodb+srv://rider:12345678Ah@nodecourse-zfafv.mongodb.net/shop';
 
@@ -33,6 +34,7 @@ app.set('views', './src/views');
 app.use(session({ secret: 'mygoodsecrettext', resave: false, saveUninitialized: true, store: store }));
 
 app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
 	if (!req.session.user) {
