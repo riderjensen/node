@@ -12,19 +12,23 @@
 
 				</div>
 				<div class="col-xs-12 col-sm-6">
-					<form action="/signup" method="POST">
+					<% if (errorMessage) { %>
+					<div class="alert alert-danger" role="alert">
+						<%= errorMessage %>
+					</div>
+					<% } %>
+					<form action="/signup" method="POST" novalidate>
 						<label for="email">Email</label>
-						<input class="form-control" type="email" name="email" id="email">
-						<% if (errorMessage) { %>
-						<p class="error">
-							<%= errorMessage %>
-						</p>
-						<% } %>
+						<input class="form-control <%= validationErrors.find(e => e.param === 'email') ? 'alert alert-danger' : '' %>"
+						 type="email" name="email" id="email" value="<%= oldInput.email %>">
+
 						<label for="password">Password</label>
-						<input class="form-control" type="password" name="password" id="password">
+						<input class="form-control <%= validationErrors.find(e => e.param === 'password') ? 'alert alert-danger' : '' %>"
+						 type="password" name="password" id="password" value="<%= oldInput.password %>">
 
 						<label for="passwordConf">Confirm Password</label>
-						<input class="form-control" type="password" name="passwordConf" id="passwordConf">
+						<input class="form-control <%= validationErrors.find(e => e.param === 'passwordConf') ? 'alert alert-danger' : '' %>"
+						 type="password" name="passwordConf" id="passwordConf" value="<%= oldInput.passwordConf %>">
 						<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 						<br />
 						<button type="submit" class="btn btn-primary">Sign Up</button>
