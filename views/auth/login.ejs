@@ -12,17 +12,20 @@
 
 				</div>
 				<div class="col-xs-12 col-sm-6">
+					<% if (errorMessage) { %>
+					<div class="alert alert-danger" role="alert">
+						<%= errorMessage %>
+					</div>
+					<% } %>
 					<form action="/login" method="POST">
 						<label for="email">Email</label>
-						<input class="form-control" type="email" name="email" id="email">
+						<input class="form-control <%= validationErrors.find(e => e.param === 'email') ? 'alert alert-danger' : '' %>"
+						 type="email" name="email" id="email" value="<%= oldInput.email %>">
 
 						<label for="password">Password</label>
-						<input class="form-control" type="password" name="password" id="password">
-						<% if (errorMessage) { %>
-						<p class="error">
-							<%= errorMessage %>
-						</p>
-						<% } %>
+						<input class="form-control <%= validationErrors.find(e => e.param === 'password') ? 'alert alert-danger' : '' %>"
+						 type="password" name="password" id="password" value="<%= oldInput.password %>">
+
 						<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 						<br />
 						<button type="submit" class="btn btn-primary">Login</button>
