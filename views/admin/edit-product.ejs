@@ -12,18 +12,22 @@
 
 				</div>
 				<div class="col-xs-12 col-sm-6">
+					<% if (errorMessage) { %>
+					<div class="alert alert-danger" role="alert">
+						<%= errorMessage %>
+					</div>
 					<form action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
 						<label for="title">Title</label>
-						<input class="form-control" type="text" name="title" id="title" value="<% if (editing) { %><%=product.title%><% } %>">
+						<input class="form-control" type="text" name="title" id="title" value="<% if (editing || hasError) { %><%=product.title%><% } %>">
 
 						<label for="imageURL">Image URL</label>
-						<input class="form-control" type="text" name="imageURL" id="imageURL" value="<% if (editing) { %><%=product.imageURL%><% } %>">
+						<input class="form-control" type="text" name="imageURL" id="imageURL" value="<% if (editing || hasError) { %><%=product.imageURL%><% } %>">
 
 						<label for="price">Price</label>
-						<input class="form-control" type="number" name="price" id="price" step="0.01" value="<% if (editing) { %><%=product.price%><% } %>">
+						<input class="form-control" type="number" name="price" id="price" step="0.01" value="<% if (editing || hasError) { %><%=product.price%><% } %>">
 
 						<label for="desc">Description</label>
-						<textarea class="form-control" type="text" name="description" id="desc" rows="5"><% if (editing) { %>
+						<textarea class="form-control" type="text" name="description" id="desc" rows="5"><% if (editing || hasError) { %>
 						<%=product.description%>
 						<% } %></textarea>
 						<% if (editing) { %>
