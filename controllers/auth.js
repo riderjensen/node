@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
+const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
 
@@ -22,17 +23,48 @@ exports.getLogin = (req, res) => {
 		path: '/login',
 		title: 'Login',
 		isAuthenticated: false,
-		errorMessage: message
+		errorMessage: message,
+		oldInput: {
+			email: '',
+			password: '',
+		},
+		validationErrors: []
 	})
 };
 
 exports.postLogin = (req, res) => {
 	const { email, password } = req.body;
+
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		return res.status(422).render('auth/login', {
+			path: '/login',
+			title: 'Login',
+			isAuthenticated: false,
+			errorMessage: errors.array()[0].msg,
+			oldInput: {
+				email: email,
+				password: password,
+			},
+			validationErrors: []
+		})
+	}
 	User.findOne({ email: email })
 		.then(user => {
 			if (!user) {
-				req.flash('error', 'Invalid email or password.');
-				return res.redirect('/login');
+
+				return res.render('auth/login', {
+					path: '/login',
+					title: 'Login',
+					isAuthenticated: false,
+					errorMessage: 'Invalid email or password',
+					oldInput: {
+						email: email,
+						password: password,
+					},
+					validationErrors: errors.array()
+				});
 			}
 			bcrypt.compare(password, user.password)
 				.then(doMatch => {
@@ -41,7 +73,17 @@ exports.postLogin = (req, res) => {
 						req.session.user = user;
 						return req.session.save(err => {
 							if (err) console.log(err);
-							return res.redirect('/');
+							return res.render('auth/login', {
+								path: '/login',
+								title: 'Login',
+								isAuthenticated: false,
+								errorMessage: 'Invalid email or password',
+								oldInput: {
+									email: email,
+									password: password,
+								},
+								validationErrors: errors.array()
+							});
 						})
 
 					}
@@ -66,39 +108,54 @@ exports.getSignup = (req, res) => {
 	res.render('auth/signup', {
 		path: '/signup',
 		title: 'Sign Up',
-		errorMessage: message
+		errorMessage: message,
+		oldInput: {
+			email: '',
+			password: '',
+			passwordConf: ''
+		},
+		validationErrors: []
 
 	})
 };
 
 exports.postSignup = (req, res) => {
 	const { email, password, passwordConf } = req.body;
-	User.findOne({ email: email })
-		.then(userDoc => {
-			if (userDoc) {
-				req.flash('error', 'Email already exists.');
-				return res.redirect('/signup');
-			}
-			return bcrypt.hash(password, 12).then(hashedPassword => {
-				const user = new User({
-					email,
-					password: hashedPassword,
-					cart: { items: [] }
-				});
-				return user.save()
-					.then(result => {
-						res.redirect('/login');
-						transporter.sendMail({
-							to: email,
-							from: 'shop@ridershop.com',
-							subject: 'Welcome to the shop',
-							html: '<h2>Welcome to the shop, peep it any day.</h2>'
-						})
-					}).catch(err => console.log(err));
-				;
-			})
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).render('auth/signup', {
+			path: '/signup',
+			title: 'Sign Up',
+			errorMessage: errors.array()[0].msg,
+			oldInput: {
+				email: email,
+				password: password,
+				passwordConf: passwordConf
+			},
+			validationErrors: errors.array()
 
-		}).catch(err => console.log(err));
+		});
+	}
+
+	return bcrypt.hash(password, 12).then(hashedPassword => {
+		const user = new User({
+			email,
+			password: hashedPassword,
+			cart: { items: [] }
+		});
+		return user.save()
+			.then(result => {
+				res.redirect('/login');
+				transporter.sendMail({
+					to: email,
+					from: 'shop@ridershop.com',
+					subject: 'Welcome to the shop',
+					html: '<h2>Welcome to the shop, peep it any day.</h2>'
+				})
+			}).catch(err => console.log(err));
+
+	});
+
 }
 
 exports.postLogout = (req, res) => {
