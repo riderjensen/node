@@ -12,14 +12,15 @@
 
 				</div>
 				<div class="col-xs-12 col-sm-6">
+					<% if (errorMessage) { %>
+					<div class="alert alert-danger" role="alert">
+						<%= errorMessage %>
+					</div>
+					<% } %>
 					<form action="/reset" method="POST">
 						<label for="email">Email</label>
 						<input class="form-control" type="email" name="email" id="email">
-						<% if (errorMessage) { %>
-						<p class="error">
-							<%= errorMessage %>
-						</p>
-						<% } %>
+
 						<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 						<br />
 						<button type="submit" class="btn btn-primary">Reset Password</button>

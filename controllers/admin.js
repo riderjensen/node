@@ -1,11 +1,17 @@
+const { validationResult } = require('express-validator/check');
+
 const Product = require('../models/product');
+
 
 exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
 		title: "Add Product",
 		path: '/admin/add-product',
 		editing: false,
-		isAuthenticated: req.session.isLoggedIn
+		hasError: false,
+		errorMessage: null,
+		errors: [],
+		validationErrors: []
 	});
 }
 
@@ -16,11 +22,30 @@ exports.postAddProduct = (req, res) => {
 		price,
 		description
 	} = req.body;
-	const product = new Product({ title, price, description, imageURL, userId: req.user });
-	product.save().then(() => {
-		res.redirect('/admin/products')
-	}).catch(err => console.log(err));
-
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		res.status(422).render('admin/edit-product', {
+			title: "Add Product",
+			path: '/admin/add-product',
+			editing: false,
+			hasError: true,
+			product: {
+				title: title,
+				imageURL: imageURL,
+				price: price,
+				description: description
+			},
+			errorMessage: errors.array()[0].msg,
+			validationErrors: errors.array()
+		});
+	} else {
+		const product = new Product({ title, price, description, imageURL, userId: req.user });
+		product.save()
+			.then(() => {
+				res.redirect('/admin/products')
+			})
+			.catch(err => console.log(err));
+	}
 }
 
 exports.getEditProduct = (req, res) => {
@@ -38,7 +63,12 @@ exports.getEditProduct = (req, res) => {
 				title: "Edit Product",
 				path: '/admin/add-product',
 				editing: editMode,
-				product
+				hasError: false,
+				product,
+				errorMessage: null,
+				errors: [],
+				validationErrors: []
+
 			});
 		})
 		.catch(err => console.log(err));
@@ -50,22 +80,41 @@ exports.postEditProduct = (req, res) => {
 	const updatedPrice = req.body.price;
 	const updatedImageURL = req.body.imageURL;
 	const updatedDescription = req.body.description;
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		res.status(422).render('admin/edit-product', {
+			title: "Edit Product",
+			path: '/admin/edit-product',
+			editing: true,
+			hasError: true,
+			product: {
+				title: updatedTitle,
+				imageURL: updatedImageURL,
+				price: updatedPrice,
+				description: updatedDescription,
+				_id: prodId
+			},
+			errorMessage: errors.array()[0].msg,
+			validationErrors: errors.array()
+		});
+	} else {
+		Product.findById(prodId)
+			.then(product => {
+				if (product.userId.toString() !== req.user._id.toString()) {
+					return res.redirect('/');
+				}
+				product.title = updatedTitle;
+				product.price = updatedPrice;
+				product.imageURL = updatedImageURL;
+				product.description = updatedDescription
+				return product.save()
+			})
+			.then((response) => {
+				console.log('Updated product');
+				res.redirect('/admin/products');
+			}).catch(err => console.log(err));
+	}
 
-	Product.findById(prodId)
-		.then(product => {
-			if (product.userId.toString() !== req.user._id.toString()) {
-				return res.redirect('/');
-			}
-			product.title = updatedTitle;
-			product.price = updatedPrice;
-			product.imageURL = updatedImageURL;
-			product.description = updatedDescription
-			return product.save()
-		})
-		.then((response) => {
-			console.log('Updated product');
-			res.redirect('/admin/products');
-		}).catch(err => console.log(err));
 
 }
 
