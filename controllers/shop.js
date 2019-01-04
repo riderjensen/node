@@ -22,7 +22,11 @@ exports.getProducts = (req, res, next) => {
 				path: '/product-list',
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
 
 exports.getSingleProduct = (req, res, next) => {
@@ -35,7 +39,11 @@ exports.getSingleProduct = (req, res, next) => {
 				path: '/product-detail',
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
 
 
@@ -51,7 +59,11 @@ exports.getCart = (req, res, next) => {
 				products,
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
 
 exports.postCart = (req, res, next) => {
@@ -72,7 +84,11 @@ exports.postCartDelete = (req, res, next) => {
 		.then(cart => {
 			res.redirect('/cart');
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
 
 exports.postOrder = (req, res, next) => {
@@ -82,7 +98,11 @@ exports.postOrder = (req, res, next) => {
 		.then(user => {
 			const products = user.cart.items.map(i => {
 
-				return { quantity: i.quantity, product: { ...i.productId._doc } }
+				return {
+					quantity: i.quantity,
+					product: { ...i.productId._doc
+					}
+				}
 			});
 			console.log(products)
 			const order = new Order({
@@ -100,11 +120,17 @@ exports.postOrder = (req, res, next) => {
 
 		})
 		.then(result => res.redirect('/orders'))
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 };
 
 exports.getOrders = (req, res, next) => {
-	Order.find({ "user.userId": req.user._id })
+	Order.find({
+			"user.userId": req.user._id
+		})
 		.then(orders => {
 			res.render('shop/orders', {
 				title: 'Your Orders',
@@ -112,5 +138,9 @@ exports.getOrders = (req, res, next) => {
 				orders,
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
