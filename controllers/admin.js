@@ -1,4 +1,6 @@
-const { validationResult } = require('express-validator/check');
+const {
+	validationResult
+} = require('express-validator/check');
 
 const Product = require('../models/product');
 
@@ -39,12 +41,22 @@ exports.postAddProduct = (req, res) => {
 			validationErrors: errors.array()
 		});
 	} else {
-		const product = new Product({ title, price, description, imageURL, userId: req.user });
+		const product = new Product({
+			title,
+			price,
+			description,
+			imageURL,
+			userId: req.user
+		});
 		product.save()
 			.then(() => {
 				res.redirect('/admin/products')
 			})
-			.catch(err => console.log(err));
+			.catch(err => {
+				const error = new Error(err);
+				error.httpStatusCode = 500;
+				return next(error);
+			});
 	}
 }
 
@@ -71,7 +83,11 @@ exports.getEditProduct = (req, res) => {
 
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
 
 exports.postEditProduct = (req, res) => {
@@ -112,14 +128,20 @@ exports.postEditProduct = (req, res) => {
 			.then((response) => {
 				console.log('Updated product');
 				res.redirect('/admin/products');
-			}).catch(err => console.log(err));
+			}).catch(err => {
+				const error = new Error(err);
+				error.httpStatusCode = 500;
+				return next(error);
+			});
 	}
 
 
 }
 
 exports.getProductsAll = (req, res) => {
-	Product.find({ userId: req.user._id })
+	Product.find({
+			userId: req.user._id
+		})
 		// .select('title price -_id')
 		// .populate('userId', 'name')
 		.then(products => {
@@ -129,15 +151,26 @@ exports.getProductsAll = (req, res) => {
 				path: '/admin/products',
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 }
 
 exports.postDeleteProduct = (req, res) => {
 	const prodId = req.body.productId;
-	Product.deleteOne({ _id: prodId, userId: req.user._id })
+	Product.deleteOne({
+			_id: prodId,
+			userId: req.user._id
+		})
 		.then(result => {
 			res.redirect('/admin/products');
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			const error = new Error(err);
+			error.httpStatusCode = 500;
+			return next(error);
+		});
 
 }

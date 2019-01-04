@@ -31,7 +31,12 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', './src/views');
 
-app.use(session({ secret: 'mygoodsecrettext', resave: false, saveUninitialized: true, store: store }));
+app.use(session({
+	secret: 'mygoodsecrettext',
+	resave: false,
+	saveUninitialized: true,
+	store: store
+}));
 
 app.use(csrfProtection);
 app.use(flash());
@@ -42,10 +47,15 @@ app.use((req, res, next) => {
 	}
 	User.findById(req.session.user._id)
 		.then(user => {
+			if (!user) {
+				return next();
+			}
 			req.user = user;
 			next();
 		})
-		.catch(err => console.log(err))
+		.catch(err => {
+			next(new Error(err));
+		})
 })
 
 app.use((req, res, next) => {
@@ -58,6 +68,16 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+
+
+app.get('/500', errorController.get500);
+
+app.use((error, req, res, next) => {
+	res.status(500).render('500', {
+		title: "Error",
+		path: "/500",
+	});
+});
 
 // views
 app.set('view engine', 'ejs');
