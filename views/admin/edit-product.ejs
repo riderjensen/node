@@ -17,14 +17,18 @@
 						<%= errorMessage %>
 					</div>
 					<% } %>
-					<form action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
+					<form action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
 						<label for="title">Title</label>
 						<input class="form-control <%= validationErrors.find(e => e.param === 'title') ? 'alert alert-danger' : '' %>"
 						 type="text" name="title" id="title" value="<% if (editing || hasError) { %><%=product.title%><% } %>">
 
-						<label for="imageURL">Image URL</label>
+
+						<label for="image">Image</label>
+						<input class="form-control-file" type="file" name="image" id="image">
+
+						<!-- <label for="imageURL">Image URL</label>
 						<input class="form-control <%= validationErrors.find(e => e.param === 'imageURL') ? 'alert alert-danger' : '' %>"
-						 type="text" name="imageURL" id="imageURL" value="<% if (editing || hasError) { %><%=product.imageURL%><% } %>">
+						 type="text" name="imageURL" id="imageURL" value="<% if (editing || hasError) { %><%=product.imageURL%><% } %>"> -->
 
 						<label for="price">Price</label>
 						<input class="form-control <%= validationErrors.find(e => e.param === 'price') ? 'alert alert-danger' : '' %>"
