@@ -9,3 +9,5 @@ usingnpm/node_modules/*
 expressMod/data/products\.json
 
 expressMod/data/cart\.json
+
+images/
