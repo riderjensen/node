@@ -5,6 +5,7 @@ const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const MONGODB_URI = 'mongodb+srv://rider:12345678Ah@nodecourse-zfafv.mongodb.net/shop';
 
@@ -24,10 +25,39 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 const mongoose = require('mongoose');
 
+const fileStorage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, './images/');
+	},
+	filename: (req, file, cb) => {
+		cb(null, Date.now() + '-' + file.originalname);
+	}
+});
+
+const fileFilter = (req, file, cb) => {
+	if (
+		file.mimetype === 'image/png' ||
+		file.mimetype === 'image/jpg' ||
+		file.mimetype === 'image/jpeg'
+	) {
+		cb(null, true);
+	} else {
+		cb(null, false);
+	}
+};
+
 app.use(bodyParser.urlencoded({
 	extended: false,
 	useNewUrlParser: true
 }));
+
+app.use(
+	multer({
+		storage: fileStorage,
+		fileFilter: fileFilter
+	}).single('image')
+);
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', './src/views');
 
@@ -72,10 +102,20 @@ app.use(authRoutes);
 
 app.get('/500', errorController.get500);
 
+app.use(errorController.get404);
+
+
+// app.use((error, req, res, next) => {
+// 	res.redirect('/500');
+// });
+
 app.use((error, req, res, next) => {
+	console.log(error)
 	res.status(500).render('500', {
-		title: "Error",
-		path: "/500",
+		title: 'Error!',
+		path: '/500',
+		isAuthenticated: false,
+		csrfToken: ''
 	});
 });
 
@@ -83,7 +123,6 @@ app.use((error, req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-app.use(errorController.get404);
 
 mongoose.connect(MONGODB_URI)
 	.then(() => {
