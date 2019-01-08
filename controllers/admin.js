@@ -108,12 +108,15 @@ exports.getEditProduct = (req, res) => {
 		});
 }
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = (req, res, next) => {
 	const prodId = req.body.productId;
 	const updatedTitle = req.body.title;
 	const updatedPrice = req.body.price;
-	const updatedImageURL = req.body.imageURL;
+	const updatedImage = req.file;
 	const updatedDescription = req.body.description;
+
+
+
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		res.status(422).render('admin/edit-product', {
@@ -123,7 +126,6 @@ exports.postEditProduct = (req, res) => {
 			hasError: true,
 			product: {
 				title: updatedTitle,
-				imageURL: updatedImageURL,
 				price: updatedPrice,
 				description: updatedDescription,
 				_id: prodId
@@ -141,6 +143,9 @@ exports.postEditProduct = (req, res) => {
 				product.price = updatedPrice;
 				product.imageURL = updatedImageURL;
 				product.description = updatedDescription
+				if (updatedImage) {
+					product.imageURL = image.path
+				}
 				return product.save()
 			})
 			.then((response) => {
