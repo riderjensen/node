@@ -4,6 +4,8 @@ const {
 
 const Product = require('../models/product');
 
+const fileHelper = require('../utils/file');
+
 
 exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
@@ -144,6 +146,7 @@ exports.postEditProduct = (req, res, next) => {
 				product.imageURL = updatedImageURL;
 				product.description = updatedDescription
 				if (updatedImage) {
+					fileHelper.deleteFile(product.imageURL);
 					product.imageURL = image.path
 				}
 				return product.save()
@@ -183,9 +186,16 @@ exports.getProductsAll = (req, res) => {
 
 exports.postDeleteProduct = (req, res) => {
 	const prodId = req.body.productId;
-	Product.deleteOne({
-			_id: prodId,
-			userId: req.user._id
+	Product.findById(prodId)
+		.then(product => {
+			if (!product) {
+				return next(new Error('Product not found'));
+			}
+			fileHelper.deleteFile(product.imageURL);
+			return Product.deleteOne({
+				_id: prodId,
+				userId: req.user._id
+			})
 		})
 		.then(result => {
 			res.redirect('/admin/products');
