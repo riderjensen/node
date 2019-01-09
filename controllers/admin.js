@@ -4,6 +4,8 @@ const {
 
 const Product = require('../models/product');
 
+const fileHelper = require('../utils/file');
+
 
 exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
@@ -144,6 +146,7 @@ exports.postEditProduct = (req, res, next) => {
 				product.imageURL = updatedImageURL;
 				product.description = updatedDescription
 				if (updatedImage) {
+					fileHelper.deleteFile(product.imageURL);
 					product.imageURL = image.path
 				}
 				return product.save()
