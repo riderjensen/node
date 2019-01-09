@@ -4,16 +4,31 @@ const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getIndex = (req, res) => {
-	Product.find()
+	const page = req.query.page;
+	let totalItems;
+	Product.find().countDocuments().then(numProds => {
+			totalItems = numProds;
+			return Product.find()
+				.skip((page - 1) * ITEMS_PER_PAGE)
+				.limit(ITEMS_PER_PAGE)
+		})
 		.then(products => {
 			res.render('shop/index', {
 				products: products,
 				title: 'Home',
 				path: '/',
+				totalProducts: totalItems,
+				hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+				hasPreviousPage: page > 1,
+				nextPage: page + 1,
+				previousPage: page - 1,
+				lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
 			});
 		})
-		.catch();
+		.catch(err => next(err));
 }
 
 exports.getProducts = (req, res, next) => {
