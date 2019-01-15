@@ -22,6 +22,9 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/error');
 
+const productsController = require('./controllers/shop');
+const isAuth = require('./middleware/is-auth');
+
 const User = require('./models/user');
 const mongoose = require('mongoose');
 
@@ -70,7 +73,6 @@ app.use(session({
 	store: store
 }));
 
-app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -89,6 +91,12 @@ app.use((req, res, next) => {
 			next(new Error(err));
 		})
 })
+
+
+
+app.post('/create-order', isAuth, productsController.postOrder);
+
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
 	res.locals.isAuthenticated = req.session.isLoggedIn;

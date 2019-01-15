@@ -10,8 +10,35 @@
 				<div class="col-xs-12">
 
 					<h1>Checkout page</h1>
+					<% if (products.length > 0) { %>
+					<ul>
+						<% products.forEach(p => { %>
+						<li>
+							<p>
+								<%= p.productId.title %> (
+								<%= p.quantity %> )</p>
+						</li>
+						<% }) %>
+
+
+					</ul>
+					<div>Total sum
+						<%= totalSum %>
+					</div>
+					<form action="/create-order" method="POST">
+						<script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_rBtINKGVLvDQaFajHXg065n9"
+						 data-amount="<%= totalSum * 100 %>" data-name="Demo Site" data-description="Example charge" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+						 data-locale="auto">
+						</script>
+					</form>
+					<hr />
+
+					<% } else { %>
+					<h1>No products in Cart!</h1>
+					<% } %>
 				</div>
 			</div>
+		</div>
 		</div>
 
 	</main>

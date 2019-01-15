@@ -13,3 +13,5 @@ expressMod/data/cart\.json
 images/
 
 data/invoices/
+
+local_vars\.js
