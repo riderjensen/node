@@ -10,8 +10,27 @@
 				<div class="col-xs-12">
 
 					<h1>Checkout page</h1>
+					<% if (products.length > 0) { %>
+					<ul>
+						<% products.forEach(p => { %>
+						<li>
+							<p>
+								<%= p.productId.title %> (
+								<%= p.quantity %> )</p>
+						</li>
+						<% }) %>
+						<div>Total sum
+							<%= totalSum %>
+						</div>
+					</ul>
+					<hr />
+
+					<% } else { %>
+					<h1>No products in Cart!</h1>
+					<% } %>
 				</div>
 			</div>
+		</div>
 		</div>
 
 	</main>
