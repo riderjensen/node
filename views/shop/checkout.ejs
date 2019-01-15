@@ -19,10 +19,18 @@
 								<%= p.quantity %> )</p>
 						</li>
 						<% }) %>
-						<div>Total sum
-							<%= totalSum %>
-						</div>
+
+
 					</ul>
+					<div>Total sum
+						<%= totalSum %>
+					</div>
+					<form action="/create-order" method="POST">
+						<script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_rBtINKGVLvDQaFajHXg065n9"
+						 data-amount="<%= totalSum * 100 %>" data-name="Demo Site" data-description="Example charge" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+						 data-locale="auto">
+						</script>
+					</form>
 					<hr />
 
 					<% } else { %>
